@@ -2,6 +2,8 @@ import elements.ClassKind;
 import elements.Block;
 import elements.Chapter;
 import elements.Category;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -36,27 +38,45 @@ public class ClamlConverter implements IClamlConverter {
 
     public void convertToJson() throws XPathExpressionException, InstantiationException, IllegalAccessException {
         this.chapters = this.getClassKindInstances(Chapter.class);
+        System.out.println(this.chapters);
         this.blocks = this.getClassKindInstances(Block.class);
         this.diseases = this.getClassKindInstances(Category.class);
+        System.out.println(this.diseases);
+        System.out.println(this.getFinalResult());
     }
 
     private <T extends ClassKind> Map<String, T> getClassKindInstances(Class<T> classType) throws XPathExpressionException, IllegalAccessException, InstantiationException {
-        String chapterExpression = String.format("/ClaML/Class[@kind='%1$s']", classType.getSimpleName().toLowerCase());
-        NodeList classKindNodes = (NodeList) this.xpath.compile(chapterExpression).evaluate(this.dom, XPathConstants.NODESET);
-        Map<String, T> chapters = new HashMap<>();
+        String expression = String.format("/ClaML/Class[@kind='%1$s']", classType.getSimpleName().toLowerCase());
+        System.out.println(expression);
+        NodeList classKindNodes = (NodeList) this.xpath.compile(expression).evaluate(this.dom, XPathConstants.NODESET);
+        Map<String, T> classMap = new HashMap<>();
         for (int i = 0; i < classKindNodes.getLength(); i++) {
             if (classKindNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) classKindNodes.item(i);
                 ClassKind classKind = ClassKindFactory.getClassKind(el);
-                chapters.put(classKind.getCode(), classType.cast(classKind));
+                System.out.println(classKind);
+                classMap.put(classKind.getCode(), classType.cast(classKind));
             }
         }
-        return chapters;
+        return classMap;
+    }
+
+    private String getFinalResult() {
+        JSONObject obj = new JSONObject();
+        JSONArray arr = new JSONArray();
+        for (Category category: this.diseases.values()) {
+            JSONObject categoryJSON = category.toJSON();
+            System.out.println(categoryJSON);
+            arr.add(categoryJSON);
+        }
+        obj.put("diseases", arr);
+        return obj.toJSONString();
     }
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, IllegalAccessException, InstantiationException {
         FileLoader loader = new FileLoader();
-        Document dom = loader.getDom("icd.claml.xml");
+        Document dom = loader.getDom("icd.claml.min.xml");
+        System.out.println(dom.getDocumentElement().getAttribute("version"));
         ClamlConverter converter = new ClamlConverter(dom);
         converter.convertToJson();
     }

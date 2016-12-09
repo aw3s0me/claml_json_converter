@@ -15,4 +15,5 @@ hs_err_pid*
 *.iml
 
 *.claml.xml
+*.claml.min.xml
 ClaML.dtd

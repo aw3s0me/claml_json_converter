@@ -1,5 +1,6 @@
 package elements;
 
+import org.json.simple.JSONObject;
 import org.w3c.dom.Element;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -18,5 +19,15 @@ public class Block extends ClassKind {
                 "name='" + name + '\'' +
                 ", code='" + code + '\'' +
                 '}';
+    }
+
+    @Override
+    public JSONObject toJSON() {
+        JSONObject obj = new JSONObject();
+        obj.put("code", this.getCode());
+        obj.put("name", this.getName());
+        obj.put("hasPart", this.getHasPartJSON());
+        obj.put("isPartOf", this.getIsPartOf());
+        return obj;
     }
 }

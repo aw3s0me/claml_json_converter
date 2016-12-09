@@ -92,10 +92,14 @@ public abstract class ClassKind {
 
     public abstract JSONObject toJSON();
 
-    public JSONArray getHasPart() {
+    public JSONArray getHasPartJSON() {
         JSONArray hasPart = new JSONArray();
-        hasPart.addAll(childrenCodes);
+        hasPart.addAll(this.childrenCodes);
         return hasPart;
+    }
+
+    public boolean hasChildren() {
+        return !this.childrenCodes.isEmpty();
     }
 
     public String getIsPartOf() {
