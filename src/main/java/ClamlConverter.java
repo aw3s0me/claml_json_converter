@@ -4,6 +4,7 @@ import elements.classes.Block;
 import elements.classes.Chapter;
 import elements.classes.Category;
 import elements.modifiers.Modifier;
+import elements.modifiers.ModifierClass;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
@@ -18,6 +19,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,10 +72,18 @@ public class ClamlConverter implements IClamlConverter {
                 Modifier modifier = new Modifier(el);
                 System.out.println(modifier);
                 modifiers.put(modifier.getCode(), modifier);
+
+                // TODO: init here modifier class for modifier
             }
         }
 
         return modifiers;
+    }
+
+    private ArrayList<ModifierClass> getModifierClasses(Modifier modifier) {
+        String expression = String.format("/ClaML/ModifierClass[@modifier='%1$s']", modifier.getCode());
+        
+        return null;
     }
 
     private String getFinalResult() {
