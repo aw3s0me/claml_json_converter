@@ -8,9 +8,6 @@ import javax.xml.xpath.XPathExpressionException;
  * Created by korovin on 12/9/2016.
  */
 public class Chapter extends BaseClamlEl {
-    private String name;
-    private String code;
-
     public Chapter(Element xmlNode) throws XPathExpressionException {
         // map chapter
         this.code = xmlNode.getAttribute("code");
