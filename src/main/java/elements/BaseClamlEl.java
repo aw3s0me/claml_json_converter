@@ -2,6 +2,7 @@ package elements;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -20,7 +21,7 @@ public class BaseClamlEl {
     protected String name;
     protected String code;
     protected Map<String, BaseClamlEl> children = new HashMap<String, BaseClamlEl>();
-    protected List<String> childrenCodes = new ArrayList<String>();
+    protected List<String> childrenCodes;
     protected String basePath;
 
     public BaseClamlEl(Element xmlNode, String basePath)  throws XPathExpressionException {
@@ -28,6 +29,7 @@ public class BaseClamlEl {
         this.code = xmlNode.getAttribute("code");
         this.basePath = String.format(basePath, this.code);
         this.name = this.fetchName(xmlNode);
+        this.childrenCodes = this.fetchChildrenCodes(xmlNode);
     }
 
     /**
@@ -43,7 +45,17 @@ public class BaseClamlEl {
         return node.getTextContent();
     }
 
-    protected List<String> fetchChildrenCodes(Element element, String path) throws XPathExpressionException {
-        return null;
+    protected List<String> fetchChildrenCodes(Element element) throws XPathExpressionException {
+        ArrayList<String> childrenCodes = new ArrayList<String>();
+        String path = this.basePath + "/SubClass";
+        NodeList subclasses = (NodeList) this.xpath.compile(path).evaluate(element, XPathConstants.NODESET);
+        for (int i = 0; i < subclasses.getLength(); i++) {
+            if (subclasses.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element el = (Element) subclasses.item(i);
+                System.out.println(el.getAttribute("code"));
+                childrenCodes.add(el.getAttribute("code"));
+            }
+        }
+        return childrenCodes;
     }
 }
