@@ -5,14 +5,15 @@ import org.w3c.dom.Element;
 /**
  * Created by korovin on 12/9/2016.
  */
-public class Chapter {
+public class Chapter extends BaseClamlEl {
     private String name;
     private String code;
 
     public Chapter(Element xmlNode) {
         // TODO: map chapter
-        this.name = "test";
-        this.code = "I";
+        this.name = this.fetchName(xmlNode);
+        this.code = xmlNode.getAttribute("code");
+
     }
 
     public String getName() {
