@@ -1,7 +1,7 @@
-import elements.ClassKind;
-import elements.Block;
-import elements.Chapter;
-import elements.Category;
+import elements.classes.ClassKind;
+import elements.classes.Block;
+import elements.classes.Chapter;
+import elements.classes.Category;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;

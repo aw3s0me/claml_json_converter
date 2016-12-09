@@ -1,4 +1,4 @@
-package elements;
+package elements.classes;
 
 import org.json.simple.JSONObject;
 import org.w3c.dom.Element;
@@ -8,18 +8,16 @@ import javax.xml.xpath.XPathExpressionException;
 /**
  * Created by korovin on 12/9/2016.
  */
-public class Category extends ClassKind {
-    public Category(Element xmlNode) throws XPathExpressionException {
-        super(xmlNode, "/ClaML/Class[@kind='category' and @code='%1$s']");
+public class Block extends ClassKind {
+    public Block(Element xmlNode) throws XPathExpressionException {
+        super(xmlNode, "/ClaML/Class[@kind='block' and @code='%1$s']");
     }
 
     @Override
     public String toString() {
-        return "ClassKind{" +
-                ", name='" + name + '\'' +
+        return "Block{" +
+                "name='" + name + '\'' +
                 ", code='" + code + '\'' +
-                ", hasPart=" + childrenCodes +
-                ", isPartOf='" + isPartOf + '\'' +
                 '}';
     }
 
@@ -28,9 +26,7 @@ public class Category extends ClassKind {
         JSONObject obj = new JSONObject();
         obj.put("code", this.getCode());
         obj.put("name", this.getName());
-        if (this.hasChildren()) {
-            obj.put("hasPart", this.getHasPartJSON());
-        }
+        obj.put("hasPart", this.getHasPartJSON());
         obj.put("isPartOf", this.getIsPartOf());
         return obj;
     }

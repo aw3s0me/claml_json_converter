@@ -1,4 +1,7 @@
-import elements.*;
+import elements.classes.Block;
+import elements.classes.Category;
+import elements.classes.Chapter;
+import elements.classes.ClassKind;
 import org.w3c.dom.Element;
 
 import javax.xml.xpath.XPathExpressionException;

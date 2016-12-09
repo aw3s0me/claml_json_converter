@@ -1,4 +1,4 @@
-package elements;
+package elements.classes;
 
 import org.json.simple.JSONArray;
 import org.w3c.dom.Element;
