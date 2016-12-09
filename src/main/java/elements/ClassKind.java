@@ -20,7 +20,7 @@ public class ClassKind {
     protected XPath xpath = XPathFactory.newInstance().newXPath();
     protected String name;
     protected String code;
-    protected Map<String, ClassKind> children = new HashMap<String, ClassKind>();
+    protected Map<String, ClassKind> children = new HashMap<>();
     protected List<String> childrenCodes;
     protected String basePath;
     // parent code
@@ -32,6 +32,8 @@ public class ClassKind {
         this.basePath = String.format(basePath, this.code);
         this.name = this.fetchName(xmlNode);
         this.childrenCodes = this.fetchChildrenCodes(xmlNode);
+        this.isPartOf = this.fetchParentCode(xmlNode);
+        System.out.println(this.isPartOf);
     }
 
     /**
@@ -54,11 +56,16 @@ public class ClassKind {
         for (int i = 0; i < subclasses.getLength(); i++) {
             if (subclasses.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) subclasses.item(i);
-                System.out.println(el.getAttribute("code"));
                 childrenCodes.add(el.getAttribute("code"));
             }
         }
         return childrenCodes;
+    }
+
+    protected String fetchParentCode(Element element) throws XPathExpressionException {
+        String path = this.basePath + "/SuperClass";
+        Node node = (Node) xpath.compile(path).evaluate(element, XPathConstants.NODE);
+        return node != null? node.getAttributes().getNamedItem("code").getNodeValue() : null;
     }
 
     public String getName() {
