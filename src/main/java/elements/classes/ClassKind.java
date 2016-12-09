@@ -1,5 +1,6 @@
 package elements.classes;
 
+import elements.base.ClamlBase;
 import org.json.simple.JSONArray;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,10 +19,9 @@ import java.util.Map;
 /**
  * Created by korovin on 12/9/2016.
  */
-public abstract class ClassKind {
+public abstract class ClassKind extends ClamlBase {
     protected XPath xpath = XPathFactory.newInstance().newXPath();
     protected String name;
-    protected String code;
     protected Map<String, ClassKind> children = new HashMap<>();
     protected List<String> childrenCodes;
     protected String basePath;
@@ -29,8 +29,8 @@ public abstract class ClassKind {
     protected String isPartOf;
 
     public ClassKind(Element xmlNode, String basePath)  throws XPathExpressionException {
+        super(xmlNode);
         // map chapter
-        this.code = xmlNode.getAttribute("code");
         this.basePath = String.format(basePath, this.code);
         this.name = this.fetchName(xmlNode);
         this.childrenCodes = this.fetchChildrenCodes(xmlNode);
