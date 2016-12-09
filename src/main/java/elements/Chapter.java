@@ -25,7 +25,7 @@ public class Chapter extends ClassKind {
         JSONObject obj = new JSONObject();
         obj.put("code", this.getCode());
         obj.put("name", this.getName());
-        obj.put("hasPart", this.getHasPart());
+        obj.put("hasPart", this.getHasPartJSON());
         return obj;
     }
 }
