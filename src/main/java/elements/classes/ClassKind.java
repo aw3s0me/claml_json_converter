@@ -1,6 +1,7 @@
 package elements.classes;
 
 import elements.base.ClamlBase;
+import elements.base.LabelBase;
 import org.json.simple.JSONArray;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,34 +20,17 @@ import java.util.Map;
 /**
  * Created by korovin on 12/9/2016.
  */
-public abstract class ClassKind extends ClamlBase {
-    protected String name;
+public abstract class ClassKind extends LabelBase {
     protected Map<String, ClassKind> children = new HashMap<>();
     protected List<String> childrenCodes;
-    protected String basePath;
     // parent code
     protected String isPartOf;
 
     public ClassKind(Element xmlNode, String basePath)  throws XPathExpressionException {
-        super(xmlNode);
-        // map chapter
-        this.basePath = String.format(basePath, this.code);
-        this.name = this.fetchName(xmlNode);
+        super(xmlNode, basePath);
+
         this.childrenCodes = this.fetchChildrenCodes(xmlNode);
         this.isPartOf = this.fetchParentCode(xmlNode);
-    }
-
-    /**
-     * create xpath and fetch name from Rubric with attr value preferred
-     * @param element
-     * @return
-     * @throws XPathExpressionException
-     */
-    protected String fetchName(Element element) throws XPathExpressionException {
-        String path = this.basePath + "/Rubric[@kind='preferred']/Label";
-        Node node = (Node) xpath.compile(path).evaluate(element, XPathConstants.NODE);
-
-        return node.getTextContent();
     }
 
     protected List<String> fetchChildrenCodes(Element element) throws XPathExpressionException {

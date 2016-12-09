@@ -2,6 +2,7 @@ package elements.modifiers;
 
 import elements.base.ClamlBase;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 
@@ -13,7 +14,15 @@ public class Modifier extends ClamlBase {
 
     public Modifier(Element xmlNode) {
         super(xmlNode);
-        // TODO: init modifier class
-        // TODO: fetch all children
+        // initialize array list of modifiers
+        this.modifiers = new ArrayList<>(this.getModifierClassNum(xmlNode));
+    }
+
+    private int getModifierClassNum(Element xmlNode) {
+        return xmlNode.getElementsByTagName("SubClass").getLength();
+    }
+
+    public ArrayList<ModifierClass> getModifiers() {
+        return modifiers;
     }
 }
