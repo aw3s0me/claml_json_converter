@@ -2,10 +2,13 @@ import elements.Block;
 import elements.Chapter;
 import elements.Disease;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,26 +18,28 @@ import java.util.Map;
  * Created by korovin on 12/9/2016.
  */
 public class ClamlConverter implements IClamlConverter {
-    private Document xmlData;
+    private Document dom;
     private XPath xpath;
     private Map<String, Chapter> chapters = new HashMap<String, Chapter>();
     private Map<String, Block> blocks = new HashMap<String, Block>();
     private Map<String, Disease> diseases = new HashMap<String, Disease>();
 
 
-    public ClamlConverter(Document xmlData) {
-        this.xmlData = xmlData;
+    public ClamlConverter(Document dom) {
+        this.dom = dom;
         XPathFactory factory = XPathFactory.newInstance();
         this.xpath = factory.newXPath();
     }
 
-    public void convertToJson() {
+    public void convertToJson() throws XPathExpressionException {
         this.chapters = getChapters();
         this.blocks = initBlocks();
         this.diseases = getDiseases();
     }
 
-    private Map<String, Chapter> getChapters() {
+    private Map<String, Chapter> getChapters() throws XPathExpressionException {
+        String chapterExpression = "/ClaML/Class[@kind='chapter']";
+        NodeList chaptersNodes = (NodeList) this.xpath.compile(chapterExpression).evaluate(this.dom, XPathConstants.NODESET);
         return null;
     }
 
