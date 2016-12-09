@@ -13,6 +13,8 @@ import javax.xml.xpath.XPathFactory;
  */
 public class BaseClamlEl {
     protected XPath xpath = XPathFactory.newInstance().newXPath();
+    protected String name;
+    protected String code;
 
     /**
      * create xpath and fetch name from Rubric with attr value preferred
