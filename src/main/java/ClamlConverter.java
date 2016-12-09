@@ -1,7 +1,7 @@
 import elements.ClassKind;
 import elements.Block;
 import elements.Chapter;
-import elements.Disease;
+import elements.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,7 +25,7 @@ public class ClamlConverter implements IClamlConverter {
     private XPath xpath;
     private Map<String, Chapter> chapters;
     private Map<String, Block> blocks = new HashMap<>();
-    private Map<String, Disease> diseases = new HashMap<>();
+    private Map<String, Category> diseases = new HashMap<>();
 
 
     public ClamlConverter(Document dom) {
@@ -37,7 +37,7 @@ public class ClamlConverter implements IClamlConverter {
     public void convertToJson() throws XPathExpressionException, InstantiationException, IllegalAccessException {
         this.chapters = this.getClassKindInstances(Chapter.class);
         this.blocks = this.getClassKindInstances(Block.class);
-        this.diseases = getDiseases();
+        this.diseases = this.getClassKindInstances(Category.class);
     }
 
     private <T extends ClassKind> Map<String, T> getClassKindInstances(Class<T> classType) throws XPathExpressionException, IllegalAccessException, InstantiationException {
@@ -48,15 +48,10 @@ public class ClamlConverter implements IClamlConverter {
             if (classKindNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) classKindNodes.item(i);
                 ClassKind classKind = ClassKindFactory.getClassKind(el);
-                System.out.println(classKind);
                 chapters.put(classKind.getCode(), classType.cast(classKind));
             }
         }
         return chapters;
-    }
-
-    private Map<String, Disease> getDiseases() {
-        return null;
     }
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, IllegalAccessException, InstantiationException {

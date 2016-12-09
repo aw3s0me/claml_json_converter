@@ -16,7 +16,7 @@ public class ClassKindFactory {
             case "chapter":
                 return new Chapter(el);
             case "category":
-                return new Disease(el);
+                return new Category(el);
             default:
                 throw new IllegalArgumentException("The type in factory is not found: " + type);
         }
