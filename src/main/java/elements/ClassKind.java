@@ -1,8 +1,10 @@
 package elements;
 
+import org.json.simple.JSONArray;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.json.simple.JSONObject;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -16,7 +18,7 @@ import java.util.Map;
 /**
  * Created by korovin on 12/9/2016.
  */
-public class ClassKind {
+public abstract class ClassKind {
     protected XPath xpath = XPathFactory.newInstance().newXPath();
     protected String name;
     protected String code;
@@ -33,7 +35,6 @@ public class ClassKind {
         this.name = this.fetchName(xmlNode);
         this.childrenCodes = this.fetchChildrenCodes(xmlNode);
         this.isPartOf = this.fetchParentCode(xmlNode);
-        System.out.println(this.isPartOf);
     }
 
     /**
@@ -87,5 +88,17 @@ public class ClassKind {
                 ", basePath='" + basePath + '\'' +
                 ", isPartOf='" + isPartOf + '\'' +
                 '}';
+    }
+
+    public abstract JSONObject toJSON();
+
+    public JSONArray getHasPart() {
+        JSONArray hasPart = new JSONArray();
+        hasPart.addAll(childrenCodes);
+        return hasPart;
+    }
+
+    public String getIsPartOf() {
+        return isPartOf;
     }
 }
