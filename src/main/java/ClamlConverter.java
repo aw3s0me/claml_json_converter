@@ -47,6 +47,7 @@ public class ClamlConverter implements IClamlConverter {
             if (chaptersNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) chaptersNodes.item(i);
                 Chapter chapter = new Chapter(el);
+                System.out.println(chapter);
                 chapters.put(chapter.getCode(), chapter);
             }
         }
@@ -59,9 +60,10 @@ public class ClamlConverter implements IClamlConverter {
         return null;
     }
 
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         FileLoader loader = new FileLoader();
         Document dom = loader.getDom("icd.claml.xml");
-        System.out.println(dom.getDocumentElement());
+        ClamlConverter converter = new ClamlConverter(dom);
+        converter.convertToJson();
     }
 }
