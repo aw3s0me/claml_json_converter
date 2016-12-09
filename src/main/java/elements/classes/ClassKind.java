@@ -20,7 +20,6 @@ import java.util.Map;
  * Created by korovin on 12/9/2016.
  */
 public abstract class ClassKind extends ClamlBase {
-    protected XPath xpath = XPathFactory.newInstance().newXPath();
     protected String name;
     protected Map<String, ClassKind> children = new HashMap<>();
     protected List<String> childrenCodes;
