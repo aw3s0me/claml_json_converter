@@ -7,17 +7,9 @@ import javax.xml.xpath.XPathExpressionException;
 /**
  * Created by korovin on 12/9/2016.
  */
-public class Chapter extends BaseClamlEl {
+public class Chapter extends ClassKind {
     public Chapter(Element xmlNode) throws XPathExpressionException {
         super(xmlNode, "/ClaML/Class[@kind='chapter' and @code='%1$s']");
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getCode() {
-        return code;
     }
 
     @Override
