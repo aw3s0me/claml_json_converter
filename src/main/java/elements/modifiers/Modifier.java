@@ -25,4 +25,11 @@ public class Modifier extends ClamlBase {
     public ArrayList<ModifierClass> getModifiers() {
         return modifiers;
     }
+
+    @Override
+    public String toString() {
+        return "Modifier{" +
+                "code='" + code + '\'' +
+                '}';
+    }
 }

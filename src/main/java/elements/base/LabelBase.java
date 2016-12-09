@@ -13,13 +13,6 @@ public class LabelBase extends ClamlBase {
     protected String basePath;
     protected String name;
 
-    public LabelBase(Element xmlNode, String basePath) throws XPathExpressionException {
-        super(xmlNode);
-        // map chapter
-        this.basePath = String.format(basePath, this.code);
-        this.name = this.fetchName(xmlNode);
-    }
-
     /**
      * create xpath and fetch name from Rubric with attr value preferred
      * @param element
@@ -31,5 +24,16 @@ public class LabelBase extends ClamlBase {
         Node node = (Node) xpath.compile(path).evaluate(element, XPathConstants.NODE);
 
         return node.getTextContent();
+    }
+
+    public LabelBase(Element xmlNode, String basePath) throws XPathExpressionException {
+        super(xmlNode);
+        // map chapter
+        this.basePath = String.format(basePath, this.code);
+        this.name = this.fetchName(xmlNode);
+    }
+
+    public String getName() {
+        return name;
     }
 }

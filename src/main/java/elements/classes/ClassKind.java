@@ -52,18 +52,9 @@ public abstract class ClassKind extends LabelBase {
         return node != null? node.getAttributes().getNamedItem("code").getNodeValue() : null;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
     @Override
     public String toString() {
         return "ClassKind{" +
-                "xpath=" + xpath +
                 ", name='" + name + '\'' +
                 ", code='" + code + '\'' +
                 ", children=" + children +

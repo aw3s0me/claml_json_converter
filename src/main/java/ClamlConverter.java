@@ -1,7 +1,9 @@
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import elements.classes.ClassKind;
 import elements.classes.Block;
 import elements.classes.Chapter;
 import elements.classes.Category;
+import elements.modifiers.Modifier;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
@@ -26,9 +28,9 @@ public class ClamlConverter implements IClamlConverter {
     private Document dom;
     private XPath xpath;
     private Map<String, Chapter> chapters;
-    private Map<String, Block> blocks = new HashMap<>();
-    private Map<String, Category> diseases = new HashMap<>();
-
+    private Map<String, Block> blocks;
+    private Map<String, Category> diseases;
+    private Map<String, Modifier> modifiers;
 
     public ClamlConverter(Document dom) {
         this.dom = dom;
@@ -37,17 +39,14 @@ public class ClamlConverter implements IClamlConverter {
     }
 
     public void convertToJson() throws XPathExpressionException, InstantiationException, IllegalAccessException {
+        this.modifiers = this.getModifiers();
         this.chapters = this.getClassKindInstances(Chapter.class);
-        System.out.println(this.chapters);
         this.blocks = this.getClassKindInstances(Block.class);
         this.diseases = this.getClassKindInstances(Category.class);
-        System.out.println(this.diseases);
-        System.out.println(this.getFinalResult());
     }
 
     private <T extends ClassKind> Map<String, T> getClassKindInstances(Class<T> classType) throws XPathExpressionException, IllegalAccessException, InstantiationException {
         String expression = String.format("/ClaML/Class[@kind='%1$s']", classType.getSimpleName().toLowerCase());
-        System.out.println(expression);
         NodeList classKindNodes = (NodeList) this.xpath.compile(expression).evaluate(this.dom, XPathConstants.NODESET);
         Map<String, T> classMap = new HashMap<>();
         for (int i = 0; i < classKindNodes.getLength(); i++) {
@@ -59,6 +58,22 @@ public class ClamlConverter implements IClamlConverter {
             }
         }
         return classMap;
+    }
+
+    private Map<String, Modifier> getModifiers() throws XPathExpressionException {
+        Map<String, Modifier> modifiers = new HashMap<>();
+
+        NodeList modifierNodeList = this.dom.getElementsByTagName("Modifier");
+        for (int i = 0; i < modifierNodeList.getLength(); i++) {
+            if (modifierNodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element el = (Element) modifierNodeList.item(i);
+                Modifier modifier = new Modifier(el);
+                System.out.println(modifier);
+                modifiers.put(modifier.getCode(), modifier);
+            }
+        }
+
+        return modifiers;
     }
 
     private String getFinalResult() {
