@@ -16,15 +16,17 @@ import java.util.Map;
 /**
  * Created by korovin on 12/9/2016.
  */
-public class BaseClamlEl {
+public class ClassKind {
     protected XPath xpath = XPathFactory.newInstance().newXPath();
     protected String name;
     protected String code;
-    protected Map<String, BaseClamlEl> children = new HashMap<String, BaseClamlEl>();
+    protected Map<String, ClassKind> children = new HashMap<String, ClassKind>();
     protected List<String> childrenCodes;
     protected String basePath;
+    // parent code
+    protected String isPartOf;
 
-    public BaseClamlEl(Element xmlNode, String basePath)  throws XPathExpressionException {
+    public ClassKind(Element xmlNode, String basePath)  throws XPathExpressionException {
         // map chapter
         this.code = xmlNode.getAttribute("code");
         this.basePath = String.format(basePath, this.code);
@@ -57,5 +59,26 @@ public class BaseClamlEl {
             }
         }
         return childrenCodes;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    @Override
+    public String toString() {
+        return "ClassKind{" +
+                "xpath=" + xpath +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", children=" + children +
+                ", childrenCodes=" + childrenCodes +
+                ", basePath='" + basePath + '\'' +
+                ", isPartOf='" + isPartOf + '\'' +
+                '}';
     }
 }
