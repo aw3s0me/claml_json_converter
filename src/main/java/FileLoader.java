@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by korovin on 12/9/2016.
  */
-public final class FileLoader {
+public class FileLoader {
     public Document getDom(String fileName) throws ParserConfigurationException, IOException, SAXException {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource(fileName).getFile());
