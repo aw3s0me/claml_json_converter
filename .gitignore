@@ -13,3 +13,7 @@ hs_err_pid*
 
 .idea/
 *.iml
+
+*.claml.xml
+*.claml.min.xml
+ClaML.dtd
