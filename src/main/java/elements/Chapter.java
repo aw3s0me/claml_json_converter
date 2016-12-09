@@ -9,10 +9,7 @@ import javax.xml.xpath.XPathExpressionException;
  */
 public class Chapter extends BaseClamlEl {
     public Chapter(Element xmlNode) throws XPathExpressionException {
-        // map chapter
-        this.code = xmlNode.getAttribute("code");
-        String pathToName = String.format("/ClaML/Class[@kind='chapter' and @code='%1$s']/Rubric[@kind='preferred']/Label", this.code);
-        this.name = this.fetchName(xmlNode, pathToName);
+        super(xmlNode, "/ClaML/Class[@kind='chapter' and @code='%1$s']");
     }
 
     public String getName() {
