@@ -1,4 +1,6 @@
+import elements.Block;
 import elements.Chapter;
+import elements.Disease;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -16,6 +18,9 @@ public class ClamlConverter implements IClamlConverter {
     private Document xmlData;
     private XPath xpath;
     private Map<String, Chapter> chapters = new HashMap<String, Chapter>();
+    private Map<String, Block> blocks = new HashMap<String, Block>();
+    private Map<String, Disease> diseases = new HashMap<String, Disease>();
+
 
     public ClamlConverter(Document xmlData) {
         this.xmlData = xmlData;
@@ -24,10 +29,18 @@ public class ClamlConverter implements IClamlConverter {
     }
 
     public void convertToJson() {
-        //
+        this.chapters = getChapters();
+        this.blocks = initBlocks();
+        this.diseases = getDiseases();
     }
 
     private Map<String, Chapter> getChapters() {
+        return null;
+    }
+
+    private Map<String, Block> initBlocks() { return null; }
+
+    private Map<String, Disease> getDiseases() {
         return null;
     }
 
