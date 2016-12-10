@@ -14,8 +14,6 @@ public class Modifier extends ClamlBase {
 
     public Modifier(Element xmlNode) {
         super(xmlNode);
-        // initialize array list of modifiers
-        this.modifiers = new ArrayList<>(this.getModifierClassNum(xmlNode));
     }
 
     private int getModifierClassNum(Element xmlNode) {
@@ -24,6 +22,10 @@ public class Modifier extends ClamlBase {
 
     public ArrayList<ModifierClass> getModifiers() {
         return modifiers;
+    }
+
+    public void setModifiers(ArrayList<ModifierClass> modifiers) {
+        this.modifiers = modifiers;
     }
 
     @Override

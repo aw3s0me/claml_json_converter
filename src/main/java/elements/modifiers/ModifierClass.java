@@ -21,4 +21,15 @@ public class ModifierClass extends LabelBase {
     public String getIsPartOf() {
         return isPartOf;
     }
+
+    public int getArrayIndex() {
+        return Integer.parseInt(this.getCode());
+    }
+
+    @Override
+    public String toString() {
+        return "ModifierClass{" +
+                "isPartOf='" + isPartOf + '\'' +
+                '}';
+    }
 }
