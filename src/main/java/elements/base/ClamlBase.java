@@ -16,6 +16,10 @@ public abstract class ClamlBase {
         this.code = xmlNode.getAttribute("code");
     }
 
+    public ClamlBase(String code) {
+        this.code = code;
+    }
+
     public String getCode() {
         return code;
     }

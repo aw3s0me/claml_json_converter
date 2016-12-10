@@ -31,8 +31,9 @@ public class ClamlConverter implements IClamlConverter {
     private XPath xpath;
     private Map<String, Chapter> chapters;
     private Map<String, Block> blocks;
-    private Map<String, Category> diseases;
+    // private Map<String, Category> diseases;
     private Map<String, Modifier> modifiers;
+    private JSONArray categoryJSONArr = new JSONArray();
 
     public ClamlConverter(Document dom) {
         this.dom = dom;
@@ -44,7 +45,9 @@ public class ClamlConverter implements IClamlConverter {
         this.modifiers = this.getModifiers();
         this.chapters = this.getClassKindInstances(Chapter.class);
         this.blocks = this.getClassKindInstances(Block.class);
-        this.diseases = this.getCategories();
+        this.initCategoriesJSON();
+        System.out.println(this.getFinalResult());
+        // this.diseases = this.initCategoriesJSON();
     }
 
     private <T extends ClassKind> Map<String, T> getClassKindInstances(Class<T> classType) throws XPathExpressionException, IllegalAccessException, InstantiationException {
@@ -62,59 +65,53 @@ public class ClamlConverter implements IClamlConverter {
         return classMap;
     }
 
-    private Map<String, Category> getCategories() throws XPathExpressionException, IllegalAccessException, InstantiationException {
+    /**
+     * Saving categories to json array
+     * Unchecked warning suppressed because JSONArray is used without generic type
+     * @throws XPathExpressionException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @SuppressWarnings("unchecked")
+    private void initCategoriesJSON() throws XPathExpressionException, IllegalAccessException, InstantiationException {
         String expression = "/ClaML/Class[@kind='category']";
         NodeList classKindNodes = (NodeList) this.xpath.compile(expression).evaluate(this.dom, XPathConstants.NODESET);
-        Map<String, Category> classMap = new HashMap<>();
+        // Map<String, Category> classMap = new HashMap<>();
         for (int i = 0; i < classKindNodes.getLength(); i++) {
             if (classKindNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) classKindNodes.item(i);
                 ClassKind classKind = ClassKindFactory.getClassKind(el);
                 System.out.println(classKind);
-                classMap.put(classKind.getCode(), Category.class.cast(classKind));
-                this.createCategoriesByModifiers(el);
+                Category categoryToAdd = Category.class.cast(classKind);
+                categoryJSONArr.add(categoryToAdd.toJSON());
+                // classMap.put(classKind.getCode(), categoryToAdd);
+
+                if (categoryToAdd.isModified()) {
+                    this.createCategoriesByModifiers(categoryToAdd);
+                }
             }
         }
-        return classMap;
+
     }
 
-    private void createCategoriesByModifiers(Element el) {
-        NodeList modifiedByNode = el.getElementsByTagName("ModifiedBy");
-        if (modifiedByNode.getLength() == 0) {
-            return;
-        }
-
-        Element modifiedBy = (Element)modifiedByNode.item(0);
+    private void createCategoriesByModifiers(Category category) {
         // check if optional or has subclasses. then skip it
-        if (this.isModifierOptional(modifiedBy) || (el.getElementsByTagName("SubClass").getLength() > 0)) {
+        if (category.getModifiedBy().isOptional()|| category.hasChildren()) {
             return;
         }
 
-        String code = modifiedBy.getAttribute("code");
+        String code = category.getModifiedBy().getCode();
         Modifier modifier = this.modifiers.get(code);
         HashMap<String, ModifierClass> mClasses = modifier.getModifiers();
 
         for(ModifierClass mc: mClasses.values()) {
-            Category category = this.getCategoryFromMClass(mc);
-            if (category != null) {
-                this.diseases.put(category.getCode(), category);
-            }
+            String codeC = category.getCode() + mc.getCode();
+            String name = category.getName() + " : " + mc.getName();
+            String isPartOf = category.getCode();
+            Category newCategory = new Category(codeC, "", name, null, isPartOf);
+            categoryJSONArr.add(newCategory.toJSON());
+            // this.diseases.put(newCategory.getCode(), newCategory);
         }
-    }
-
-    private boolean isModifierOptional(Element el) {
-        NodeList metaNodes = el.getElementsByTagName("meta");
-        if (metaNodes.getLength() == 0) {
-            return false;
-        }
-
-        Element metaNode = (Element)metaNodes.item(0);
-        return metaNode.getAttribute("usage").equals("optional");
-
-    }
-
-    private Category getCategoryFromMClass(ModifierClass mc) {
-        return null;
     }
 
     private Map<String, Modifier> getModifiers() throws XPathExpressionException {
@@ -154,13 +151,13 @@ public class ClamlConverter implements IClamlConverter {
 
     private String getFinalResult() {
         JSONObject obj = new JSONObject();
-        JSONArray arr = new JSONArray();
-        for (Category category: this.diseases.values()) {
-            JSONObject categoryJSON = category.toJSON();
-            System.out.println(categoryJSON);
-            arr.add(categoryJSON);
-        }
-        obj.put("diseases", arr);
+//        JSONArray arr = new JSONArray();
+//        for (Category category: this.diseases.values()) {
+//            JSONObject categoryJSON = category.toJSON();
+//            System.out.println(categoryJSON);
+//            arr.add(categoryJSON);
+//        }
+        obj.put("diseases", this.categoryJSONArr);
         return obj.toJSONString();
     }
 

@@ -33,6 +33,12 @@ public class LabelBase extends ClamlBase {
         this.name = this.fetchName(xmlNode);
     }
 
+    public LabelBase(String code, String basePath, String name) {
+        super(code);
+        this.basePath = basePath;
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

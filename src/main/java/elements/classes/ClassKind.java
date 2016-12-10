@@ -33,6 +33,12 @@ public abstract class ClassKind extends LabelBase {
         this.isPartOf = this.fetchParentCode(xmlNode);
     }
 
+    public ClassKind(String code, String basePath, String name, List<String> childrenCodes, String isPartOf) {
+        super(code, basePath, name);
+        this.childrenCodes = childrenCodes;
+        this.isPartOf = isPartOf;
+    }
+
     protected List<String> fetchChildrenCodes(Element element) throws XPathExpressionException {
         ArrayList<String> childrenCodes = new ArrayList<String>();
         String path = this.basePath + "/SubClass";
@@ -73,7 +79,7 @@ public abstract class ClassKind extends LabelBase {
     }
 
     public boolean hasChildren() {
-        return !this.childrenCodes.isEmpty();
+        return this.childrenCodes != null && !this.childrenCodes.isEmpty();
     }
 
     public String getIsPartOf() {
