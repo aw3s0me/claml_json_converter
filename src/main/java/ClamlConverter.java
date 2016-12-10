@@ -44,7 +44,7 @@ public class ClamlConverter implements IClamlConverter {
         this.modifiers = this.getModifiers();
         this.chapters = this.getClassKindInstances(Chapter.class);
         this.blocks = this.getClassKindInstances(Block.class);
-        this.diseases = this.getClassKindInstances(Category.class);
+        this.diseases = this.getCategories();
     }
 
     private <T extends ClassKind> Map<String, T> getClassKindInstances(Class<T> classType) throws XPathExpressionException, IllegalAccessException, InstantiationException {
@@ -60,6 +60,32 @@ public class ClamlConverter implements IClamlConverter {
             }
         }
         return classMap;
+    }
+
+    private Map<String, Category> getCategories() throws XPathExpressionException, IllegalAccessException, InstantiationException {
+        String expression = "/ClaML/Class[@kind='category']";
+        NodeList classKindNodes = (NodeList) this.xpath.compile(expression).evaluate(this.dom, XPathConstants.NODESET);
+        Map<String, Category> classMap = new HashMap<>();
+        for (int i = 0; i < classKindNodes.getLength(); i++) {
+            if (classKindNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element el = (Element) classKindNodes.item(i);
+                ClassKind classKind = ClassKindFactory.getClassKind(el);
+                System.out.println(classKind);
+                classMap.put(classKind.getCode(), Category.class.cast(classKind));
+                this.createCategoriesByModifiers(el);
+            }
+        }
+        return classMap;
+    }
+
+    private void createCategoriesByModifiers(Element el) {
+        NodeList modifier = el.getElementsByTagName("ModifiedBy");
+        if (modifier.getLength() == 0) {
+            return;
+        }
+
+        Node modifiedBy = modifier.item(0);
+
     }
 
     private Map<String, Modifier> getModifiers() throws XPathExpressionException {

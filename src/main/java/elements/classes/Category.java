@@ -15,7 +15,7 @@ public class Category extends ClassKind {
 
     @Override
     public String toString() {
-        return "ClassKind{" +
+        return "Category{" +
                 ", name='" + name + '\'' +
                 ", code='" + code + '\'' +
                 ", hasPart=" + childrenCodes +
