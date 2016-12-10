@@ -9,6 +9,7 @@ import java.io.IOException;
 
 /**
  * Created by korovin on 12/9/2016.
+ * File loader helper that creates dom xml
  */
 public class FileLoader {
     public Document getDom(String fileName) throws ParserConfigurationException, IOException, SAXException {

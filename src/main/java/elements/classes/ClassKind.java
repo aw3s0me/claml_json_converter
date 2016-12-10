@@ -1,17 +1,14 @@
 package elements.classes;
 
-import elements.base.ClamlBase;
 import elements.base.LabelBase;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.json.simple.JSONObject;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +16,7 @@ import java.util.Map;
 
 /**
  * Created by korovin on 12/9/2016.
+ * Abstraction for class kind (Possible classes: Chapter, Block, Category)
  */
 public abstract class ClassKind extends LabelBase {
     protected Map<String, ClassKind> children = new HashMap<>();

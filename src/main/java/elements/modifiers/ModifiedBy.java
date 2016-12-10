@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Created by akorovin on 10.12.2016.
+ * <ModifiedBy> Abstraction
  */
 public class ModifiedBy extends ClamlBase {
     private boolean isOptional;

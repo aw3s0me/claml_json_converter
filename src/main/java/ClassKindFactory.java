@@ -8,6 +8,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 /**
  * Created by korovin on 12/9/2016.
+ * Factory to get ClassKind object by their type
  */
 public class ClassKindFactory {
     public static ClassKind getClassKind(Element el) throws XPathExpressionException {

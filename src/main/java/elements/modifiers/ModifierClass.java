@@ -1,6 +1,5 @@
 package elements.modifiers;
 
-import elements.base.ClamlBase;
 import elements.base.LabelBase;
 import org.w3c.dom.Element;
 

@@ -2,13 +2,12 @@ package elements.modifiers;
 
 import elements.base.ClamlBase;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Created by akorovin on 09.12.2016.
+ * <Modifier> Abstraction
  */
 public class Modifier extends ClamlBase {
     private HashMap<String, ModifierClass> modifiers;
@@ -25,6 +24,10 @@ public class Modifier extends ClamlBase {
         return modifiers;
     }
 
+    /**
+     * Set Modifier Classes lookup
+     * @param modifiers
+     */
     public void setModifiers(HashMap<String, ModifierClass> modifiers) {
         this.modifiers = modifiers;
     }

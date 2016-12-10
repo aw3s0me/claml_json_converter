@@ -8,6 +8,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 /**
  * Created by akorovin on 10.12.2016.
+ * Base class for claml objects with name property
  */
 public class LabelBase extends ClamlBase {
     protected String basePath;
