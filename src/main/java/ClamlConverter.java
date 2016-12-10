@@ -18,6 +18,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,8 +47,7 @@ public class ClamlConverter implements IClamlConverter {
         this.chapters = this.getClassKindInstances(Chapter.class);
         this.blocks = this.getClassKindInstances(Block.class);
         this.initCategoriesJSON();
-        System.out.println(this.getFinalResult());
-        // this.diseases = this.initCategoriesJSON();
+        this.saveResult("final.json", this.getFinalResult());
     }
 
     private <T extends ClassKind> Map<String, T> getClassKindInstances(Class<T> classType) throws XPathExpressionException, IllegalAccessException, InstantiationException {
@@ -76,12 +76,12 @@ public class ClamlConverter implements IClamlConverter {
     private void initCategoriesJSON() throws XPathExpressionException, IllegalAccessException, InstantiationException {
         String expression = "/ClaML/Class[@kind='category']";
         NodeList classKindNodes = (NodeList) this.xpath.compile(expression).evaluate(this.dom, XPathConstants.NODESET);
-        // Map<String, Category> classMap = new HashMap<>();
-        for (int i = 0; i < classKindNodes.getLength(); i++) {
+        for (int i = 0; i < 100; i++) {
+        //for (int i = 0; i < classKindNodes.getLength(); i++) {
             if (classKindNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) classKindNodes.item(i);
                 ClassKind classKind = ClassKindFactory.getClassKind(el);
-                System.out.println(classKind);
+                System.out.println(i);
                 Category categoryToAdd = Category.class.cast(classKind);
                 categoryJSONArr.add(categoryToAdd.toJSON());
                 // classMap.put(classKind.getCode(), categoryToAdd);
@@ -110,6 +110,7 @@ public class ClamlConverter implements IClamlConverter {
             String isPartOf = category.getCode();
             Category newCategory = new Category(codeC, "", name, null, isPartOf);
             categoryJSONArr.add(newCategory.toJSON());
+            category.addChildCode(codeC);
             // this.diseases.put(newCategory.getCode(), newCategory);
         }
     }
@@ -149,21 +150,27 @@ public class ClamlConverter implements IClamlConverter {
         return mcArr;
     }
 
-    private String getFinalResult() {
+    private JSONObject getFinalResult() {
         JSONObject obj = new JSONObject();
-//        JSONArray arr = new JSONArray();
-//        for (Category category: this.diseases.values()) {
-//            JSONObject categoryJSON = category.toJSON();
-//            System.out.println(categoryJSON);
-//            arr.add(categoryJSON);
-//        }
         obj.put("diseases", this.categoryJSONArr);
-        return obj.toJSONString();
+        return obj;
+    }
+
+    private void saveResult(String fileName, JSONObject obj) {
+        try (FileWriter file = new FileWriter(fileName)) {
+            file.write(obj.toJSONString());
+            System.out.println("Successfully Copied JSON Object to File...");
+            System.out.println("\nJSON Object: " + obj);
+        }
+        catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, IllegalAccessException, InstantiationException {
         FileLoader loader = new FileLoader();
-        Document dom = loader.getDom("icd.claml.min.xml");
+        // Document dom = loader.getDom("icd.claml.min.xml");
+        Document dom = loader.getDom("icd.claml.xml");
         System.out.println(dom.getDocumentElement().getAttribute("version"));
         ClamlConverter converter = new ClamlConverter(dom);
         converter.convertToJson();

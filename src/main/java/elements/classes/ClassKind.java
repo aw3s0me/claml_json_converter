@@ -82,6 +82,10 @@ public abstract class ClassKind extends LabelBase {
         return this.childrenCodes != null && !this.childrenCodes.isEmpty();
     }
 
+    public void addChildCode(String childCode) {
+        this.childrenCodes.add(childCode);
+    }
+
     public String getIsPartOf() {
         return isPartOf;
     }
