@@ -5,12 +5,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by akorovin on 09.12.2016.
  */
 public class Modifier extends ClamlBase {
-    private ArrayList<ModifierClass> modifiers;
+    private HashMap<String, ModifierClass> modifiers;
 
     public Modifier(Element xmlNode) {
         super(xmlNode);
@@ -20,11 +21,11 @@ public class Modifier extends ClamlBase {
         return xmlNode.getElementsByTagName("SubClass").getLength();
     }
 
-    public ArrayList<ModifierClass> getModifiers() {
+    public HashMap<String, ModifierClass> getModifiers() {
         return modifiers;
     }
 
-    public void setModifiers(ArrayList<ModifierClass> modifiers) {
+    public void setModifiers(HashMap<String, ModifierClass> modifiers) {
         this.modifiers = modifiers;
     }
 

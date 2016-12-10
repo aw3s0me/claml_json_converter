@@ -79,13 +79,42 @@ public class ClamlConverter implements IClamlConverter {
     }
 
     private void createCategoriesByModifiers(Element el) {
-        NodeList modifier = el.getElementsByTagName("ModifiedBy");
-        if (modifier.getLength() == 0) {
+        NodeList modifiedByNode = el.getElementsByTagName("ModifiedBy");
+        if (modifiedByNode.getLength() == 0) {
             return;
         }
 
-        Node modifiedBy = modifier.item(0);
+        Element modifiedBy = (Element)modifiedByNode.item(0);
+        // check if optional or has subclasses. then skip it
+        if (this.isModifierOptional(modifiedBy) || (el.getElementsByTagName("SubClass").getLength() > 0)) {
+            return;
+        }
 
+        String code = modifiedBy.getAttribute("code");
+        Modifier modifier = this.modifiers.get(code);
+        HashMap<String, ModifierClass> mClasses = modifier.getModifiers();
+
+        for(ModifierClass mc: mClasses.values()) {
+            Category category = this.getCategoryFromMClass(mc);
+            if (category != null) {
+                this.diseases.put(category.getCode(), category);
+            }
+        }
+    }
+
+    private boolean isModifierOptional(Element el) {
+        NodeList metaNodes = el.getElementsByTagName("meta");
+        if (metaNodes.getLength() == 0) {
+            return false;
+        }
+
+        Element metaNode = (Element)metaNodes.item(0);
+        return metaNode.getAttribute("usage").equals("optional");
+
+    }
+
+    private Category getCategoryFromMClass(ModifierClass mc) {
+        return null;
     }
 
     private Map<String, Modifier> getModifiers() throws XPathExpressionException {
@@ -99,7 +128,7 @@ public class ClamlConverter implements IClamlConverter {
                 System.out.println(modifier);
                 modifiers.put(modifier.getCode(), modifier);
                 // init here modifier class for modifier
-                ArrayList<ModifierClass> modifierClasses = this.getModifierClasses(modifier.getCode());
+                HashMap<String, ModifierClass> modifierClasses = this.getModifierClasses(modifier.getCode());
                 modifier.setModifiers(modifierClasses);
             }
         }
@@ -107,15 +136,15 @@ public class ClamlConverter implements IClamlConverter {
         return modifiers;
     }
 
-    private ArrayList<ModifierClass> getModifierClasses(String modifierCode) throws XPathExpressionException {
+    private HashMap<String, ModifierClass> getModifierClasses(String modifierCode) throws XPathExpressionException {
         String expression = String.format("/ClaML/ModifierClass[@modifier='%1$s']", modifierCode);
         NodeList mcNodes = (NodeList) this.xpath.compile(expression).evaluate(this.dom, XPathConstants.NODESET);
-        ArrayList<ModifierClass> mcArr = new ArrayList<>(mcNodes.getLength());
+        HashMap<String, ModifierClass> mcArr = new HashMap<>();
         for (int i = 0; i < mcNodes.getLength(); i++) {
             if (mcNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) mcNodes.item(i);
                 ModifierClass mc = new ModifierClass(el);
-                mcArr.add(mc.getArrayIndex(), mc);
+                mcArr.put(mc.getCode(), mc);
             }
         }
         System.out.println(mcArr);
