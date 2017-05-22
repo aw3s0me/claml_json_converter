@@ -18,4 +18,5 @@ hs_err_pid*
 *.claml.min.xml
 ClaML.dtd
 final.json
+bundle.json
 target/
