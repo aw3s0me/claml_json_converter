@@ -1,15 +1,12 @@
 package elements;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.json.simple.JSONObject;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +16,7 @@ import java.util.Map;
  * Created by korovin on 12/9/2016.
  */
 public abstract class ClassKind {
-    protected XPath xpath = XPathFactory.newInstance().newXPath();
+    // protected XPath xpath = XPathFactory.newInstance().newXPath();
     protected String name;
     protected String code;
     protected Map<String, ClassKind> children = new HashMap<>();
@@ -43,17 +40,31 @@ public abstract class ClassKind {
      * @return
      * @throws XPathExpressionException
      */
-    protected String fetchName(Element element) throws XPathExpressionException {
-        String path = this.basePath + "/Rubric[@kind='preferred']/Label";
-        Node node = (Node) xpath.compile(path).evaluate(element, XPathConstants.NODE);
+    protected String fetchName(Element element) {
+        Element rubric = this.getLabelRubric(element);
+        if (rubric == null) {
+            throw new IllegalArgumentException("Element does not contain label");
+        }
+        Node label = rubric.getElementsByTagName("Label").item(0);
 
-        return node.getTextContent();
+        return label.getTextContent();
     }
 
-    protected List<String> fetchChildrenCodes(Element element) throws XPathExpressionException {
-        ArrayList<String> childrenCodes = new ArrayList<String>();
-        String path = this.basePath + "/SubClass";
-        NodeList subclasses = (NodeList) this.xpath.compile(path).evaluate(element, XPathConstants.NODESET);
+    protected Element getLabelRubric(Element element) {
+        NodeList nodes = element.getElementsByTagName("Rubric");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element el = (Element)nodes.item(i);
+            if (el.getAttribute("kind").equals("preferred")) {
+                return el;
+            }
+        }
+
+        return null;
+    }
+
+    protected List<String> fetchChildrenCodes(Element element) {
+        ArrayList<String> childrenCodes = new ArrayList<>();
+        NodeList subclasses = element.getElementsByTagName("SubClass");
         for (int i = 0; i < subclasses.getLength(); i++) {
             if (subclasses.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) subclasses.item(i);
@@ -63,9 +74,8 @@ public abstract class ClassKind {
         return childrenCodes;
     }
 
-    protected String fetchParentCode(Element element) throws XPathExpressionException {
-        String path = this.basePath + "/SuperClass";
-        Node node = (Node) xpath.compile(path).evaluate(element, XPathConstants.NODE);
+    protected String fetchParentCode(Element element) {
+        Node node = element.getElementsByTagName("SuperClass").item(0);
         return node != null? node.getAttributes().getNamedItem("code").getNodeValue() : null;
     }
 
@@ -80,7 +90,6 @@ public abstract class ClassKind {
     @Override
     public String toString() {
         return "ClassKind{" +
-                "xpath=" + xpath +
                 ", name='" + name + '\'' +
                 ", code='" + code + '\'' +
                 ", children=" + children +

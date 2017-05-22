@@ -1,7 +1,7 @@
-import elements.ClassKind;
 import elements.Block;
-import elements.Chapter;
 import elements.Category;
+import elements.Chapter;
+import elements.ClassKind;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
@@ -11,10 +11,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,13 +38,12 @@ public class ClamlConverter implements IClamlConverter {
         this.xpath = factory.newXPath();
     }
 
-    public void convertToJson() throws XPathExpressionException, InstantiationException, IllegalAccessException {
+    public JSONObject convertToJson() throws XPathExpressionException, InstantiationException, IllegalAccessException {
         this.chapters = this.getClassKindInstances(Chapter.class);
-        System.out.println(this.chapters);
         this.blocks = this.getClassKindInstances(Block.class);
         this.diseases = this.getClassKindInstances(Category.class);
-        System.out.println(this.diseases);
-        System.out.println(this.getFinalResult());
+
+        return this.getFinalResult();
     }
 
     private <T extends ClassKind> Map<String, T> getClassKindInstances(Class<T> classType) throws XPathExpressionException, IllegalAccessException, InstantiationException {
@@ -61,23 +62,31 @@ public class ClamlConverter implements IClamlConverter {
         return classMap;
     }
 
-    private String getFinalResult() {
+    private JSONObject getFinalResult() {
         JSONObject obj = new JSONObject();
         JSONArray arr = new JSONArray();
         for (Category category: this.diseases.values()) {
             JSONObject categoryJSON = category.toJSON();
-            System.out.println(categoryJSON);
             arr.add(categoryJSON);
         }
         obj.put("diseases", arr);
-        return obj.toJSONString();
+        return obj;
     }
 
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, IllegalAccessException, InstantiationException {
+    public void saveToFile(String fileName, JSONObject obj) throws IOException {
+        try (FileWriter file = new FileWriter(fileName)) {
+            file.write(obj.toJSONString());
+        } catch (IOException e) {
+            throw new IOException(String.format("Could not save file %1$s", fileName));
+        }
+    }
+
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, IllegalAccessException, InstantiationException, XMLStreamException {
         FileLoader loader = new FileLoader();
-        Document dom = loader.getDom("icd.claml.min.xml");
+        Document dom = loader.getDom("icd.claml.xml");
         System.out.println(dom.getDocumentElement().getAttribute("version"));
         ClamlConverter converter = new ClamlConverter(dom);
-        converter.convertToJson();
+        JSONObject finalObj = converter.convertToJson();
+        converter.saveToFile("final.json", finalObj);
     }
 }
